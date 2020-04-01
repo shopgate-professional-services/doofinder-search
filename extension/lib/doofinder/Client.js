@@ -21,30 +21,24 @@ class Client {
    * @returns {Array}
    */
   async searchSuggestions (searchPhrase) {
-    var options = {
-      uri: this._baseUri + 'search/',
-      qs: {
-        hashid: this._hashId,
-        query: searchPhrase.query
-      },
+    const titles = []
+    const response = await this.request({query: searchPhrase.query})
+    for (const result of response.body.results) {
+      titles.push(result.title)
+    }
+
+    return titles
+  }
+
+  async request (params) {
+    const response = await promisify(this._tracedRequest('Doofinder'))({
+      uri: this._baseUri,
+      qs: {...{hashid: this._hashId}, ...params},
       headers: {
         'Authorization': this._authHeader
       },
       json: true
-    }
-
-    const title = []
-    const response = await this.request(options)
-    console.log(response)
-    for (const result of response.body.results) {
-      title.push(result.title)
-    }
-
-    return title
-  }
-
-  async request (options) {
-    const response = await promisify(this._tracedRequest('Doofinder'))(options)
+    })
 
     if (response.statusCode >= 500) {
       console.log(response.statusCode)
