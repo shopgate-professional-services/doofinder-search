@@ -1,4 +1,4 @@
-const ClientFactory = require('./doofinder/ClientFactory')
+const DoofinderClient = require('./doofinder/Client')
 
 /**
  * @param {PipelineContext} context
@@ -6,7 +6,7 @@ const ClientFactory = require('./doofinder/ClientFactory')
  * @returns {Promise<Object>}
  */
 module.exports = async (context, input) => {
-  const client = ClientFactory.create(context.config, context.tracedRequest)
+  const client = new DoofinderClient(context.config, context.tracedRequest)
   let suggestions = await client.searchSuggestions({query: input.searchPhrase})
   return { suggestions }
 }
