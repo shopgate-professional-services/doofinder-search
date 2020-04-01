@@ -1,4 +1,4 @@
-# Shopgate Connect - Extension doofinder-search
+# Shopgate Connect - Extension Doofinder Search
 
 [![GitHub license](http://dmlc.github.io/img/apache2.svg)](LICENSE)
 
