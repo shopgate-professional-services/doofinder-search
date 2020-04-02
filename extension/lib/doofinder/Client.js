@@ -44,7 +44,6 @@ class Client {
   async searchSuggestions (searchPhrase) {
     const titles = []
     const response = await this.request({query: searchPhrase.query}, 'suggest')
-    console.log(response)
     for (const result of response.body.results) {
       titles.push(result.term.charAt(0).toUpperCase() + result.term.slice(1))
     }

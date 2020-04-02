@@ -5,5 +5,32 @@
     
   ],
   "configuration": {
+    "zone": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "eu1",
+      "params": {
+        "label": "Doofinder API Zone",
+        "type": "text"
+      }
+    },
+    "authKey": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "",
+      "params": {
+        "label": "Doofinder API Authentication Key",
+        "type": "text"
+      }
+    },
+    "hashId": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "",
+      "params": {
+        "label": "Doofinder Search Index Hash ID",
+        "type": "text"
+      }
+    }
   }
 }
