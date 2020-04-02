@@ -7,7 +7,7 @@ class Client {
    * @param {string} authHeader
    */
   constructor (config, tracedRequest) {
-    this._baseUri = `https://${config.zone}-search.doofinder.com/5/search/`
+    this._baseUri = `https://${config.zone}-search.doofinder.com/5/`
     this._hashId = config.hashId
     this._authKey = config.authKey
     this._tracedRequest = tracedRequest
@@ -15,10 +15,11 @@ class Client {
 
   /**
    * @param {Object} params
+   * @param {string} endpoint
    */
-  async request (params) {
+  async request (params, endpoint = 'search') {
     const response = await promisify(this._tracedRequest('Doofinder'))({
-      uri: this._baseUri,
+      uri: this._baseUri + endpoint,
       qs: {...{hashid: this._hashId}, ...params},
       headers: {
         'Authorization': this._authKey
@@ -42,9 +43,10 @@ class Client {
    */
   async searchSuggestions (searchPhrase) {
     const titles = []
-    const response = await this.request({query: searchPhrase.query})
+    const response = await this.request({query: searchPhrase.query}, 'suggest')
+    console.log(response)
     for (const result of response.body.results) {
-      titles.push(result.title) // todo maybe better collect keywords instead response.body.g:keywords
+      titles.push(result.term.charAt(0).toUpperCase() + result.term.slice(1))
     }
 
     return titles
