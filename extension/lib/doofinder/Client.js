@@ -6,11 +6,12 @@ class Client {
    * @param {Object} config
    * @param {string} authHeader
    */
-  constructor (config, tracedRequest) {
-    this._baseUri = `https://${config.zone}-search.doofinder.com/5/`
-    this._hashId = config.hashId
-    this._authKey = config.authKey
-    this._tracedRequest = tracedRequest
+  constructor ({config, tracedRequest, log}) {
+    this.baseUri = `https://${config.zone}-search.doofinder.com/5/`
+    this.hashId = config.hashId
+    this.authKey = config.authKey
+    this.tracedRequest = tracedRequest
+    this.log = log
   }
 
   /**
@@ -18,20 +19,16 @@ class Client {
    * @param {string} endpoint
    */
   async request (params, endpoint = 'search') {
-    const response = await promisify(this._tracedRequest('Doofinder'))({
-      uri: this._baseUri + endpoint,
-      qs: {...{hashid: this._hashId}, ...params},
+    const response = await promisify(this.tracedRequest('Doofinder'))({
+      uri: this.baseUri + endpoint,
+      qs: {...{hashid: this.hashId}, ...params},
       headers: {
-        'Authorization': this._authKey
+        'Authorization': this.authKey
       },
       json: true
     })
-
-    if (response.statusCode >= 500) {
-      console.log(response.statusCode)
-    }
     if (response.statusCode >= 400) {
-      console.log(response.statusCode)
+      this.log.error(`Doofinder error code ${response.statusCode} in response`, response.body)
     }
 
     return response
