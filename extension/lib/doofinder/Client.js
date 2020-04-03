@@ -31,21 +31,61 @@ class Client {
       this.log.error(`Doofinder error code ${response.statusCode} in response`, response.body)
     }
 
-    return response
+    return response.body
   }
 
   /**
-   * @param {SearchRequest} searchPhrase
-   * @returns {Array}
+   * @param {String} query
+   * @param {Number} offset
+   * @param {Number} limit
    */
-  async searchSuggestions (searchPhrase) {
-    const titles = []
-    const response = await this.request({query: searchPhrase.query}, 'suggest')
-    for (const result of response.body.results) {
-      titles.push(result.term.charAt(0).toUpperCase() + result.term.slice(1))
+  async paginatedRequest (query, offset, limit) {
+    const firstPage = Math.floor(offset / 10) + 1
+    const lastPage = Math.ceil((offset + limit) / 10)
+    let skipCount = offset % 10
+    let results = []
+    let totalProductCount = 0
+
+    for (let currentPage = firstPage; currentPage <= lastPage; currentPage++) {
+      const response = await this.request({query, page: currentPage})
+      totalProductCount = response.total
+      results = results.concat(response.results)
     }
 
-    return titles
+    return {
+      results: results.slice(skipCount, limit + skipCount),
+      totalProductCount
+    }
+  }
+
+  /**
+   * @param {String} query
+   * @returns {Array}
+   */
+  async searchSuggestions (query) {
+    const suggestions = []
+    const response = await this.request({query}, 'suggest')
+    for (const result of response.results) {
+      suggestions.push(result.term.charAt(0).toUpperCase() + result.term.slice(1))
+    }
+
+    return { suggestions }
+  }
+
+  /**
+   * @param {PipelineInput} param0
+   */
+  async searchProducts ({searchPhrase, offset, limit, sort}) {
+    let productIds = []
+    const response = await this.paginatedRequest(searchPhrase, offset, limit)
+    for (const result of response.results) {
+      productIds.push(result.fallback_reference_id)
+    }
+
+    return {
+      productIds,
+      totalProductCount: response.totalProductCount
+    }
   }
 }
 
