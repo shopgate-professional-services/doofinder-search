@@ -6,7 +6,5 @@ const DoofinderClient = require('./doofinder/Client')
  * @returns {Promise<Object>}
  */
 module.exports = async (context, input) => {
-  const client = new DoofinderClient(context)
-  let suggestions = await client.searchSuggestions(input.searchPhrase)
-  return suggestions
+  return new DoofinderClient(context).getSearchSuggestions(input.searchPhrase)
 }

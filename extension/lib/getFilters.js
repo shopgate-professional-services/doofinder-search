@@ -6,5 +6,5 @@ const DoofinderClient = require('./doofinder/Client')
  * @returns {Promise<Object>}
  */
 module.exports = async (context, input) => {
-  return new DoofinderClient(context).searchProducts(input)
+  return new DoofinderClient(context).getFilters(input)
 }
