@@ -31,6 +31,19 @@
         "label": "Doofinder Search Index Hash ID",
         "type": "text"
       }
+    },
+    "filterMap": {
+      "type": "admin",
+      "destination": "backend",
+      "default": {
+        "brand": "Marke",
+        "categories": "Kategorie",
+        "price": "Preis"
+      },
+      "params": {
+        "label": "Doofinder Filter Map",
+        "type": "object"
+      }
     }
   }
 }
