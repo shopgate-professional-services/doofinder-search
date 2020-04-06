@@ -12,6 +12,7 @@ class Client {
     this.filterMap = config.filterMap
     this.tracedRequest = tracedRequest
     this.log = log
+    this.resulsPerPage = 10
   }
 
   /**
@@ -39,20 +40,22 @@ class Client {
 
   /**
    * @param {String} query
+   * @param {Object} filters
    * @param {Number} offset
    * @param {Number} limit
+   * @param {Object} sort
    *
    * @return {Object}
    */
-  async paginatedRequest (query, offset, limit) {
-    const firstPage = Math.floor(offset / 10) + 1
-    const lastPage = Math.ceil((offset + limit) / 10)
-    let skipCount = offset % 10
+  async paginatedRequest (query, filters, offset, limit, sort) {
+    const firstPage = Math.floor(offset / this.resulsPerPage) + 1
+    const lastPage = Math.ceil((offset + limit) / this.resulsPerPage)
+    const skipCount = offset % this.resulsPerPage
     let results = []
     let totalProductCount = 0
 
     for (let currentPage = firstPage; currentPage <= lastPage; currentPage++) {
-      const response = await this.request({query, page: currentPage})
+      const response = await this.request({query, filter: filters, page: currentPage, sort})
       totalProductCount = response.total
       results = results.concat(response.results)
     }
@@ -84,9 +87,11 @@ class Client {
    *
    * @return {Object}
    */
-  async searchProducts ({searchPhrase, offset, limit, sort}) {
-    let productIds = []
-    const response = await this.paginatedRequest(searchPhrase, offset, limit)
+  async searchProducts ({searchPhrase, filters, offset, limit, sort}) {
+    const searchFilters = await this.prepareFilters(filters)
+    const searchSort = await this.prepareSort(sort)
+    const response = await this.paginatedRequest(searchPhrase, searchFilters, offset, limit, searchSort)
+    const productIds = []
 
     for (const result of response.results) {
       productIds.push(result.fallback_reference_id)
@@ -99,16 +104,15 @@ class Client {
   }
 
   /**
-   * @param {PipelineInput} param0
+   * @param {String} query
    *
    * @return {Object}
    */
-  async getFilters ({searchPhrase, categoryPath}) {
-    this.log.info(`Search filter for query "${searchPhrase}" and/or category "${categoryPath}"`)
-    const response = await this.request({query: searchPhrase})
+  async getFilters (query) {
+    const response = await this.request({query})
     const filters = []
 
-    for (let [key, value] of Object.entries(response.facets)) {
+    for (const [key, value] of Object.entries(response.facets)) {
       if (['grouping_count'].includes(key)) { continue }
       filters.push({
         id: key,
@@ -128,6 +132,40 @@ class Client {
     }
 
     return { filters }
+  }
+
+  /**
+   * @param {Object} filters
+   *
+   * @return {Object}
+   */
+  async prepareFilters (filters = {}) {
+    const searchFilters = {}
+    for (const [key, value] of Object.entries(filters)) {
+      if (key === 'price') {
+        searchFilters.price = {
+          gte: value.minimum / 100,
+          lt: value.maximum / 100
+        }
+      } else {
+        searchFilters[key] = value.values.map(val => {
+          return val
+        })
+      }
+    }
+
+    return searchFilters
+  }
+
+  /**
+   * @param {String} sort
+   *
+   * @return {Object}
+   */
+  async prepareSort (sort) {
+    return {
+      price: sort === 'priceDesc' ? 'desc' : sort === 'priceAsc' ? 'asc' : undefined
+    }
   }
 }
 
