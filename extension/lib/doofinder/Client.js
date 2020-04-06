@@ -72,14 +72,13 @@ class Client {
    * @returns {Object}
    */
   async getSearchSuggestions (query) {
-    const suggestions = []
     const response = await this.request({query}, 'suggest')
 
-    for (const result of response.results) {
-      suggestions.push(result.term.charAt(0).toUpperCase() + result.term.slice(1))
+    return {
+      suggestions: response.results.map(result => {
+        return result.term.charAt(0).toUpperCase() + result.term.slice(1)
+      })
     }
-
-    return { suggestions }
   }
 
   /**
@@ -91,14 +90,9 @@ class Client {
     const searchFilters = await this.prepareFilters(filters)
     const searchSort = await this.prepareSort(sort)
     const response = await this.paginatedRequest(searchPhrase, searchFilters, offset, limit, searchSort)
-    const productIds = []
-
-    for (const result of response.results) {
-      productIds.push(result.fallback_reference_id)
-    }
 
     return {
-      productIds,
+      productIds: response.results.map(result => { return result.fallback_reference_id }),
       totalProductCount: response.totalProductCount
     }
   }
