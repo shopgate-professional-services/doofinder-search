@@ -75,9 +75,9 @@ class Client {
     const response = await this.request({query}, 'suggest')
 
     return {
-      suggestions: response.results.map(result => {
-        return result.term.charAt(0).toUpperCase() + result.term.slice(1)
-      })
+      suggestions: response.results.map(
+        result => result.term.charAt(0).toUpperCase() + result.term.slice(1)
+      )
     }
   }
 
@@ -87,12 +87,16 @@ class Client {
    * @return {Object}
    */
   async searchProducts ({searchPhrase, filters, offset, limit, sort}) {
-    const searchFilters = await this.prepareFilters(filters)
-    const searchSort = await this.prepareSort(sort)
-    const response = await this.paginatedRequest(searchPhrase, searchFilters, offset, limit, searchSort)
+    const response = await this.paginatedRequest(
+      searchPhrase,
+      await this.prepareFilters(filters),
+      offset,
+      limit,
+      await this.prepareSort(sort)
+    )
 
     return {
-      productIds: response.results.map(result => { return result.fallback_reference_id }),
+      productIds: response.results.map(result => result.fallback_reference_id),
       totalProductCount: response.totalProductCount
     }
   }
@@ -142,9 +146,7 @@ class Client {
           lt: value.maximum / 100
         }
       } else {
-        searchFilters[key] = value.values.map(val => {
-          return val
-        })
+        searchFilters[key] = value.values.map(val => val)
       }
     }
 
