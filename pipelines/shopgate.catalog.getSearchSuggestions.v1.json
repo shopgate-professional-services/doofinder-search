@@ -10,8 +10,8 @@
     ],
     "steps": [
       {
-        "id": "@shopgate-project/doofinder-search",
-        "path": "@shopgate-project/doofinder-search/lib/getSearchSuggestions.js",
+        "id": "@shopgate-project/search-doofinder",
+        "path": "@shopgate-project/search-doofinder/lib/getSearchSuggestions.js",
         "type": "extension",
         "input": [
           {

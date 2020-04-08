@@ -1,6 +1,6 @@
 {
-  "version": "0.1.0",
-  "id": "@shopgate-project/doofinder-search",
+  "version": "1.0.0-rc.4",
+  "id": "@shopgate-project/search-doofinder",
   "components": [
     
   ],
@@ -30,6 +30,28 @@
       "params": {
         "label": "Doofinder Search Index Hash ID",
         "type": "text"
+      }
+    },
+    "productIdKey": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "fallback_reference_id",
+      "params": {
+        "label": "Doofinder result key representing the product ID",
+        "type": "text"
+      }
+    },
+    "filterMap": {
+      "type": "admin",
+      "destination": "backend",
+      "default": {
+        "brand": "Marke",
+        "categories": "Kategorie",
+        "price": "Preis"
+      },
+      "params": {
+        "label": "Doofinder Filter Map",
+        "type": "object"
       }
     }
   }
