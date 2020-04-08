@@ -139,17 +139,12 @@
         },
         "else": {
           "type": "extension",
-          "id": "@shopgate-project/doofinder-search",
-          "path": "@shopgate-project/doofinder-search/lib/getFilters.js",
+          "id": "@shopgate-project/search-doofinder",
+          "path": "@shopgate-project/search-doofinder/lib/getFilters.js",
           "input": [
             {
               "key": "searchPhrase",
               "id": "2",
-              "optional": true
-            },
-            {
-              "key": "filters",
-              "id": "3",
               "optional": true
             }
           ],

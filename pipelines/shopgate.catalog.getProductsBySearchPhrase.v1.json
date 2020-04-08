@@ -49,8 +49,8 @@
     ],
     "steps": [
       {
-        "id": "@shopgate-project/doofinder-search",
-        "path": "@shopgate-project/doofinder-search/lib/getProductsBySearchPhrase.js",
+        "id": "@shopgate-project/search-doofinder",
+        "path": "@shopgate-project/search-doofinder/lib/getProductsBySearchPhrase.js",
         "type": "extension",
         "input": [
           {

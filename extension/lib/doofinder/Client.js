@@ -5,7 +5,7 @@ class Client {
   /**
    * @param {Object} config
    */
-  constructor ({config, tracedRequest, log}) {
+  constructor ({ config, tracedRequest, log }) {
     this.baseUri = `https://${config.zone}-search.doofinder.com/5/`
     this.hashId = config.hashId
     this.authKey = config.authKey
@@ -24,9 +24,9 @@ class Client {
   async request (params, endpoint = 'search') {
     const response = await promisify(this.tracedRequest('Doofinder'))({
       uri: this.baseUri + endpoint,
-      qs: {...{hashid: this.hashId}, ...params},
+      qs: { ...{ hashid: this.hashId }, ...params },
       headers: {
-        'Authorization': this.authKey
+        Authorization: this.authKey
       },
       json: true
     })
@@ -55,7 +55,7 @@ class Client {
     let totalProductCount = 0
 
     for (let currentPage = firstPage; currentPage <= lastPage; currentPage++) {
-      const response = await this.request({query, filter: filters, page: currentPage, sort})
+      const response = await this.request({ query, filter: filters, page: currentPage, sort })
       totalProductCount = response.total
       results = results.concat(response.results)
     }
@@ -72,7 +72,7 @@ class Client {
    * @returns {Object}
    */
   async getSearchSuggestions (query) {
-    const response = await this.request({query}, 'suggest')
+    const response = await this.request({ query }, 'suggest')
 
     return {
       suggestions: response.results.map(
@@ -86,13 +86,13 @@ class Client {
    *
    * @return {Object}
    */
-  async searchProducts ({searchPhrase, filters, offset, limit, sort}) {
+  async searchProducts ({ searchPhrase, filters, offset = 0, limit = 10, sort }) {
     const response = await this.paginatedRequest(
       searchPhrase,
-      await this.prepareFilters(filters),
+      this.prepareFilters(filters),
       offset,
       limit,
-      await this.prepareSort(sort)
+      this.prepareSort(sort)
     )
 
     return {
@@ -107,7 +107,7 @@ class Client {
    * @return {Object}
    */
   async getFilters (query) {
-    const response = await this.request({query})
+    const response = await this.request({ query })
     const filters = []
 
     for (const [key, value] of Object.entries(response.facets)) {
@@ -138,7 +138,7 @@ class Client {
    *
    * @return {Object}
    */
-  async prepareFilters (filters = {}) {
+  prepareFilters (filters = {}) {
     const searchFilters = {}
     for (const [key, value] of Object.entries(filters)) {
       if (key === 'price') {
@@ -159,7 +159,7 @@ class Client {
    *
    * @return {Object}
    */
-  async prepareSort (sort) {
+  prepareSort (sort) {
     return {
       price: sort === 'priceDesc' ? 'desc' : sort === 'priceAsc' ? 'asc' : undefined
     }

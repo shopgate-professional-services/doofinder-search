@@ -109,8 +109,8 @@
         }
       },
       {
-        "id": "@shopgate-project/doofinder-search",
-        "path": "@shopgate-project/doofinder-search/lib/getProductsBySearchPhraseAndFilter.js",
+        "id": "@shopgate-project/search-doofinder",
+        "path": "@shopgate-project/search-doofinder/lib/getProductsBySearchPhraseAndFilter.js",
         "type": "extension",
         "input": [
           {
