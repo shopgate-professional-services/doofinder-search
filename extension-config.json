@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "id": "@shopgate-project/search-doofinder",
   "components": [
     
@@ -29,6 +29,15 @@
       "default": "",
       "params": {
         "label": "Doofinder Search Index Hash ID",
+        "type": "text"
+      }
+    },
+    "productIdKey": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "fallback_reference_id",
+      "params": {
+        "label": "Doofinder result key representing the product ID",
         "type": "text"
       }
     },

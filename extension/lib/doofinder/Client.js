@@ -10,9 +10,9 @@ class Client {
     this.hashId = config.hashId
     this.authKey = config.authKey
     this.filterMap = config.filterMap
+    this.productIdKey = config.productIdKey
     this.tracedRequest = tracedRequest
     this.log = log
-    this.resulsPerPage = 10
   }
 
   /**
@@ -48,14 +48,15 @@ class Client {
    * @return {Object}
    */
   async paginatedRequest (query, filters, offset, limit, sort) {
-    const firstPage = Math.floor(offset / this.resulsPerPage) + 1
-    const lastPage = Math.ceil((offset + limit) / this.resulsPerPage)
-    const skipCount = offset % this.resulsPerPage
+    const rpp = limit < 100 ? limit : 100
+    const firstPage = Math.floor(offset / rpp) + 1
+    const lastPage = Math.ceil((offset + limit) / rpp)
+    const skipCount = offset % rpp
     let results = []
     let totalProductCount = 0
 
     for (let currentPage = firstPage; currentPage <= lastPage; currentPage++) {
-      const response = await this.request({ query, filter: filters, page: currentPage, sort })
+      const response = await this.request({ query, rpp, filter: filters, page: currentPage, sort })
       totalProductCount = response.total
       results = results.concat(response.results)
     }
@@ -96,7 +97,7 @@ class Client {
     )
 
     return {
-      productIds: response.results.map(result => result.fallback_reference_id),
+      productIds: response.results.map(result => result[this.productIdKey]),
       totalProductCount: response.totalProductCount
     }
   }

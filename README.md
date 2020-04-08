@@ -12,8 +12,9 @@ It does not provide filters for regular product listings in the catalog.
 | key | type | description | example |
 |---|---|---|---|
 | zone | string | zone from search index | eu1 |
-| hashId | string | hash ID from search index | dxc1e25c88d929572f347d53c65e3953 |
 | authKey | string | API auth key | d85760z8098f80049d3cd8fe63c2c63c725b78e2 |
+| hashId | string | hash ID from search index | dxc1e25c88d929572f347d53c65e3953 |
+| productIdKey | string | search result key representing the product ID | fallback_reference_id |
 | filterMap | object | map labels to filter keys | {"brand": "Marke", "categories": "Kategorie", "g:baugruppe": "Baugruppe", "price": "Preis"} |
 
 ## Changelog
