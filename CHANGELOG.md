@@ -10,12 +10,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 ### Removed
 
-## [1.0.0] - YYYY-MM-DD
-### Added
+## [1.0.1] - 2020-04-27
 ### Changed
-### Fixed
-### Removed
+- error logging for Doofinder API errors >= 400
+### Added
+- handling of empty search suggestion results
 
+## [1.0.0] - 2020-04-08
+### Added
+- basic functionality to use search suggestions and results from Doofinder API
 
-[Unreleased]: https://github.com/shopgate/ext-cliplister/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/shopgate/ext-cliplister/compare/v0.0.1...v1.0.0
+[Unreleased]: https://github.com/shopgate-professional-services/ext-search-doofinder/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/shopgate-professional-services/ext-search-doofinder/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/shopgate-professional-services/ext-search-doofinder/releases/v1.0.0
