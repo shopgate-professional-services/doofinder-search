@@ -32,7 +32,14 @@ class Client {
     })
 
     if (response.statusCode >= 400) {
-      this.log.error(`Doofinder error code ${response.statusCode} in response`, response.body)
+      this.log.error(
+        {
+          body: response.body,
+          request: params,
+          endpoint
+        },
+        `Doofinder error code ${response.statusCode} in response`
+      )
     }
 
     return response.body
@@ -76,9 +83,9 @@ class Client {
     const response = await this.request({ query }, 'suggest')
 
     return {
-      suggestions: response.results.map(
+      suggestions: response && response.results ? response.results.map(
         result => result.term.charAt(0).toUpperCase() + result.term.slice(1)
-      )
+      ) : []
     }
   }
 
