@@ -32,7 +32,14 @@ class Client {
     })
 
     if (response.statusCode >= 400) {
-      this.log.error(`Doofinder error code ${response.statusCode} in response`, { body: response.body, request: params, endpoint })
+      this.log.error(
+        {
+          body: response.body,
+          request: params,
+          endpoint
+        },
+        `Doofinder error code ${response.statusCode} in response`
+      )
     }
 
     return response.body
