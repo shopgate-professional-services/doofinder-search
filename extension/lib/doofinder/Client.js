@@ -80,7 +80,7 @@ class Client {
    * @returns {Object}
    */
   async getSearchSuggestions (query) {
-    const response = await this.request({ query }, 'suggest')
+    const response = await this.request({ query: query.slice(0, 88) }, 'suggest')
 
     return {
       suggestions: response && response.results ? response.results.map(
