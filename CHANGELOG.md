@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 ### Removed
 
+## [1.0.2] - 2020-04-28
+### Changed
+- limit query for search suggestions to 88 characters to meet Doofinder API specification
+
 ## [1.0.1] - 2020-04-27
 ### Changed
 - error logging for Doofinder API errors >= 400
@@ -20,6 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 - basic functionality to use search suggestions and results from Doofinder API
 
-[Unreleased]: https://github.com/shopgate-professional-services/ext-search-doofinder/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/shopgate-professional-services/ext-search-doofinder/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/shopgate-professional-services/ext-search-doofinder/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/shopgate-professional-services/ext-search-doofinder/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/shopgate-professional-services/ext-search-doofinder/releases/v1.0.0
