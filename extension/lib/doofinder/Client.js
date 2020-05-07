@@ -10,13 +10,10 @@ class Client {
     this.hashId = config.hashId
     this.authKey = config.authKey
     this.filterMap = config.filterMap
-    this.filterMapFlipped = {}
-    if (config.filterMap) {
-      this.filterMapFlipped = Object.keys(this.filterMap).reduce((acc, k) => {
-        acc[this.filterMap[k]] = k
-        return acc
-      }, {})
-    }
+    this.filterMapFlipped = config.filterMap ? Object.keys(this.filterMap).reduce((acc, k) => {
+      acc[this.filterMap[k]] = k
+      return acc
+    }, {}) : {}
     this.productIdKey = config.productIdKey
     this.tracedRequest = tracedRequest
     this.log = log
