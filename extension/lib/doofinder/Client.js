@@ -10,6 +10,10 @@ class Client {
     this.hashId = config.hashId
     this.authKey = config.authKey
     this.filterMap = config.filterMap
+    this.filterMapFlipped = config.filterMap ? Object.keys(this.filterMap).reduce((acc, k) => {
+      acc[this.filterMap[k]] = k
+      return acc
+    }, {}) : {}
     this.productIdKey = config.productIdKey
     this.tracedRequest = tracedRequest
     this.log = log
@@ -90,8 +94,7 @@ class Client {
   }
 
   /**
-   * @param {PipelineInput} param0
-   *
+   * @param {Object} input
    * @return {Object}
    */
   async searchProducts ({ searchPhrase, filters, offset = 0, limit = 10, sort }) {
@@ -128,13 +131,11 @@ class Client {
         type: value.range ? 'range' : 'multiselect',
         minimum: value.range ? Math.floor(value.range.buckets[0].stats.min * 100) : undefined,
         maximum: value.range ? Math.ceil(value.range.buckets[0].stats.max * 100) : undefined,
-        values: value.terms ? value.terms.buckets.map(element => {
-          return {
-            id: element.key,
-            label: element.key,
-            hits: element.docCount
-          }
-        }) : undefined
+        values: value.terms ? value.terms.buckets.map(element => ({
+          id: element.key,
+          label: element.key,
+          hits: element.doc_count
+        })) : undefined
       })
     }
 
@@ -147,19 +148,19 @@ class Client {
    * @return {Object}
    */
   prepareFilters (filters = {}) {
-    const searchFilters = {}
-    for (const [key, value] of Object.entries(filters)) {
-      if (key === 'price') {
-        searchFilters.price = {
-          gte: value.minimum / 100,
-          lt: value.maximum / 100
+    return Object.keys(filters).reduce((acc, filterKey) => {
+      if (filterKey === 'price') {
+        acc[filterKey] = {
+          gte: filters[filterKey].minimum / 100,
+          lt: filters[filterKey].maximum / 100
         }
+      } else if (this.filterMapFlipped[filterKey]) {
+        acc[this.filterMapFlipped[filterKey]] = filters[filterKey].values
       } else {
-        searchFilters[key] = value.values.map(val => val)
+        acc[filterKey] = filters[filterKey].values
       }
-    }
-
-    return searchFilters
+      return acc
+    }, {})
   }
 
   /**
