@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 ### Removed
 
+## [1.0.4] - 2020-05-11
+### Changed
+- moved price filter to top of all filters
+
 ## [1.0.2] - 2020-04-28
 ### Changed
 - limit query for search suggestions to 88 characters to meet Doofinder API specification

@@ -1,8 +1,8 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "id": "@shopgate-project/search-doofinder",
   "components": [
-    
+
   ],
   "configuration": {
     "zone": {
