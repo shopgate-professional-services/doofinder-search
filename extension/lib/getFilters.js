@@ -6,5 +6,10 @@ const DoofinderClient = require('./doofinder/Client')
  * @returns {Promise<Object>}
  */
 module.exports = async (context, input) => {
-  return new DoofinderClient(context).getFilters(input.searchPhrase)
+  const { filters } = await new DoofinderClient(context).getFilters(input.searchPhrase)
+
+  // move price filter to top
+  filters.sort((x, y) => x.id === 'price' ? -1 : y.id === 'price' ? 1 : 0)
+
+  return { filters }
 }
