@@ -56,7 +56,7 @@ class Client {
    * @param {Number} limit
    * @param {Object} sort
    *
-   * @return {Object}
+   * @return {{ results, totalProductCount }}
    */
   async paginatedRequest (query, filters, offset, limit, sort) {
     const rpp = limit < 100 ? limit : 100
@@ -69,7 +69,18 @@ class Client {
     for (let currentPage = firstPage; currentPage <= lastPage; currentPage++) {
       const response = await this.request({ query, rpp, filter: filters, page: currentPage, sort })
       totalProductCount = response.total
-      results = results.concat(response.results)
+
+      if (!response.results || !Array.isArray(response.results)) {
+        this.log.error(
+          {
+            response,
+            request: { query, rpp, filter: filters, page: currentPage, sort }
+          },
+          'Doofinder empty results in response'
+        )
+      }
+      // Force to array and filter empty items
+      results = results.concat([].concat(response.results).filter(Boolean))
     }
 
     return {
@@ -98,7 +109,7 @@ class Client {
    * @return {Object}
    */
   async searchProducts ({ searchPhrase, filters, offset = 0, limit = 10, sort }) {
-    const response = await this.paginatedRequest(
+    const { results, totalProductCount } = await this.paginatedRequest(
       searchPhrase,
       this.prepareFilters(filters),
       offset,
@@ -107,8 +118,21 @@ class Client {
     )
 
     return {
-      productIds: response.results.map(result => result[this.productIdKey]),
-      totalProductCount: response.totalProductCount
+      productIds: results.map(result => {
+        if (!result || !result[this.productIdKey]) {
+          this.log.error({
+            result,
+            searchPhrase,
+            filters,
+            offset,
+            limit,
+            sort
+          }, 'Doofinder empty result or product key for request')
+          return null
+        }
+        return result[this.productIdKey]
+      }).filter(Boolean),
+      totalProductCount
     }
   }
 
