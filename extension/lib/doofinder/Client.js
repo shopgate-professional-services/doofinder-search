@@ -68,7 +68,7 @@ class Client {
 
     for (let currentPage = firstPage; currentPage <= lastPage; currentPage++) {
       const response = await this.request({ query, rpp, filter: filters, page: currentPage, sort })
-      totalProductCount = response.total
+      totalProductCount = response.total || 0
 
       if (!response.results || !Array.isArray(response.results)) {
         this.log.error(
