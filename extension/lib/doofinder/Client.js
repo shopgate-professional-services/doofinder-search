@@ -147,7 +147,7 @@ class Client {
 
     for (const [key, value] of Object.entries(response.facets)) {
       if (['grouping_count'].includes(key)) { continue }
-      if (value.terms && value.terms.buckets && value.terms.buckets.length <= 1) { continue }
+      if (value.terms && value.terms.buckets && !value.terms.buckets.length) { continue }
       filters.push({
         id: key,
         label: this.filterMap[key] ? this.filterMap[key] : key,
