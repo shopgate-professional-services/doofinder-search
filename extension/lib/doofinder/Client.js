@@ -1,5 +1,6 @@
 'use strict'
 const { promisify } = require('util')
+const jexl = require('jexl')
 
 class Client {
   /**
@@ -14,9 +15,32 @@ class Client {
       acc[this.filterMap[k]] = k
       return acc
     }, {}) : {}
-    this.productIdKey = config.productIdKey
+
+    try {
+      this.productIdKey = jexl.compile(config.productIdKey)
+    } catch (err) {
+      this.log.error({ err }, 'Doofinder productIdKey expression is broken')
+      this.productIdKey = config.productIdKey
+    }
+
     this.tracedRequest = tracedRequest
     this.log = log
+  }
+
+  /**
+   * @param {Object} responseItem
+   * @returns {*}
+   */
+  getProductId (responseItem) {
+    if (typeof this.productIdKey !== 'string') {
+      try {
+        return this.productIdKey.evalSync(responseItem)
+      } catch (err) {
+        this.log.error({ err }, 'Doofinder product id is not found')
+        return null
+      }
+    }
+    return responseItem[this.productIdKey]
   }
 
   /**
@@ -119,7 +143,8 @@ class Client {
 
     return {
       productIds: results.map(result => {
-        if (!result || !result[this.productIdKey]) {
+        const productId = this.getProductId(result)
+        if (!productId) {
           this.log.error({
             result,
             searchPhrase,
@@ -130,7 +155,7 @@ class Client {
           }, 'Doofinder empty result or product key for request')
           return null
         }
-        return result[this.productIdKey]
+        return productId
       }).filter(Boolean),
       totalProductCount
     }

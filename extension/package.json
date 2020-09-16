@@ -15,5 +15,8 @@
     "eslint-plugin-standard": "^4.0.1",
     "lint-staged": "^10.1.2",
     "standard": "^14.3.3"
+  },
+  "dependencies": {
+    "jexl": "^2.3.0"
   }
 }
