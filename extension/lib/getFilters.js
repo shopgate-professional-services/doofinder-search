@@ -1,7 +1,4 @@
 const DoofinderClient = require('./doofinder/Client')
-const config = require('../config')
-
-const { filterPriority = { price: -1 } } = config
 
 /**
  * @param {PipelineContext} context
@@ -10,6 +7,8 @@ const { filterPriority = { price: -1 } } = config
  */
 module.exports = async (context, input) => {
   const { filters } = await new DoofinderClient(context).getFilters(input.searchPhrase)
+
+  const { filterPriority = { price: -1 } } = context.config
 
   if (filterPriority) {
     // move price filter to top
