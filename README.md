@@ -17,6 +17,19 @@ It does not provide filters for regular product listings in the catalog.
 | productIdKey | string | search result key representing the product ID | fallback_reference_id |
 | filterMap | object | map labels to filter keys | {"brand": "Marke", "categories": "Kategorie", "g:baugruppe": "Baugruppe", "price": "Preis"} |
 
+
+#### productIdKey
+
+Value of this key is evaluated using (jexl)[https://www.npmjs.com/package/jexl] library. 
+It means any of these are valid:
+
+- plain product property, eg. `fallback_reference_id`
+- concatenation expression, eg. `fallback_reference_id + '-' + id`
+- logical expression, eg.
+```
+df_grouping_id ? fallback_reference_id + '-' + id : fallback_reference_id 
+```
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) file for more information.
