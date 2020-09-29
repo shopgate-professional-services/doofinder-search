@@ -1,5 +1,6 @@
 'use strict'
 const { promisify } = require('util')
+const jexl = require('jexl')
 
 class Client {
   /**
@@ -14,9 +15,32 @@ class Client {
       acc[this.filterMap[k]] = k
       return acc
     }, {}) : {}
-    this.productIdKey = config.productIdKey
+
+    try {
+      this.productIdKey = jexl.compile(config.productIdKey)
+    } catch (err) {
+      this.log.error({ err }, 'Doofinder productIdKey expression is broken')
+      this.productIdKey = config.productIdKey
+    }
+
     this.tracedRequest = tracedRequest
     this.log = log
+  }
+
+  /**
+   * @param {Object} responseItem
+   * @returns {*}
+   */
+  getProductId (responseItem) {
+    if (typeof this.productIdKey !== 'string') {
+      try {
+        return this.productIdKey.evalSync(responseItem)
+      } catch (err) {
+        this.log.error({ err }, 'Doofinder product id is not found')
+        return null
+      }
+    }
+    return responseItem[this.productIdKey]
   }
 
   /**
@@ -56,7 +80,7 @@ class Client {
    * @param {Number} limit
    * @param {Object} sort
    *
-   * @return {Object}
+   * @return {{ results, totalProductCount }}
    */
   async paginatedRequest (query, filters, offset, limit, sort) {
     const rpp = limit < 100 ? limit : 100
@@ -68,8 +92,19 @@ class Client {
 
     for (let currentPage = firstPage; currentPage <= lastPage; currentPage++) {
       const response = await this.request({ query, rpp, filter: filters, page: currentPage, sort })
-      totalProductCount = response.total
-      results = results.concat(response.results)
+      totalProductCount = response.total || 0
+
+      if (!response.results || !Array.isArray(response.results)) {
+        this.log.error(
+          {
+            response,
+            request: { query, rpp, filter: filters, page: currentPage, sort }
+          },
+          'Doofinder empty results in response'
+        )
+      }
+      // Force to array and filter empty items
+      results = results.concat([].concat(response.results).filter(Boolean))
     }
 
     return {
@@ -98,7 +133,7 @@ class Client {
    * @return {Object}
    */
   async searchProducts ({ searchPhrase, filters, offset = 0, limit = 10, sort }) {
-    const response = await this.paginatedRequest(
+    const { results, totalProductCount } = await this.paginatedRequest(
       searchPhrase,
       this.prepareFilters(filters),
       offset,
@@ -107,8 +142,22 @@ class Client {
     )
 
     return {
-      productIds: response.results.map(result => result[this.productIdKey]),
-      totalProductCount: response.totalProductCount
+      productIds: results.map(result => {
+        const productId = this.getProductId(result)
+        if (!productId) {
+          this.log.error({
+            result,
+            searchPhrase,
+            filters,
+            offset,
+            limit,
+            sort
+          }, 'Doofinder empty result or product key for request')
+          return null
+        }
+        return productId
+      }).filter(Boolean),
+      totalProductCount
     }
   }
 
@@ -123,7 +172,7 @@ class Client {
 
     for (const [key, value] of Object.entries(response.facets)) {
       if (['grouping_count'].includes(key)) { continue }
-      if (value.terms && value.terms.buckets && value.terms.buckets.length <= 1) { continue }
+      if (value.terms && value.terms.buckets && !value.terms.buckets.length) { continue }
       filters.push({
         id: key,
         label: this.filterMap[key] ? this.filterMap[key] : key,

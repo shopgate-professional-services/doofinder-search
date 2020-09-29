@@ -41,13 +41,26 @@
         "type": "text"
       }
     },
+    "filterPriority": {
+      "type": "admin",
+      "destination": "backend",
+      "default": {
+        "price": -1,
+        "sale_price": -1
+      },
+      "params": {
+        "label": "Doofinder Filter priority (sort position)",
+        "type": "object"
+      }
+    },
     "filterMap": {
       "type": "admin",
       "destination": "backend",
       "default": {
         "brand": "Marke",
         "categories": "Kategorie",
-        "price": "Preis"
+        "price": "Preis",
+        "availability": "Verfügbarkeit"
       },
       "params": {
         "label": "Doofinder Filter Map",
