@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 ### Removed
 
+## [1.1.0] - 2020-09-29
+### Added
+New config `useSearchSuggestions` to set if search suggestions should be used or not
+
 ## [1.0.4] - 2020-05-11
 ### Changed
 - moved price filter to top of all filters

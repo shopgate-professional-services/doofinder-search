@@ -51,7 +51,16 @@
       },
       "params": {
         "label": "Doofinder Filter Map",
-        "type": "object"
+        "type": "json"
+      }
+    },
+    "useSearchSuggestions": {
+      "type": "admin",
+      "destination": "backend",
+      "default": true,
+      "params": {
+        "label": "Flag if search suggestions should be used or not",
+        "type": "checkbox"
       }
     }
   }
